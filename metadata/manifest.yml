@@ -1,0 +1,49 @@
+Name: Pynode
+Cartridge-Short-Name: PYNODE
+Cartridge-Version: '0.1.0'
+Cartridge-Vender: praisebetoscience
+Display-Name: Pynode 0.1
+Description: "This is a cartride that provides node.js and a python web framework."
+Version: "0.1.0"
+License: "The MIT License (MIT)"
+License-Url: http://opensource.org/licenses/MIT
+Catagories:
+  - service
+  - nodejs
+  - python
+  - web_framework
+Help-Topics: 
+  "Developer Center": https://www.openshift.com/developers
+Cart-Data:
+  - Key: OPENSHIFT_PYNODE_PY_DIR
+    Type: environment
+    Description: "Directory to the Python files"
+  - Key: OPENSHIFT_PYNODE_PY_VER
+    Type: environment
+    Description: "Version of Python installed."
+  - Key: OPENSHIFT_PYNODE_JS_DIR
+    Type: environment
+    Description: "Directory to node.js files"
+  - Key: OPENSHIFT_PYNODE_JS_VER
+    Type: environment
+    Description: "Version of node.js provided"
+Scaling:
+  Min: 1
+  Max: -1
+Endpoints:
+  - Private-IP-Name:   JS_IP
+    Privave-Port-Name: JS_PORT
+    Private-Port:      8080
+    Public-Port-Name:  JS_PROXY_PORT
+    Mappings:
+      - Frontend:      "/"
+        Backend:       "/"
+  - Priave-IP-Name:    PY_IP
+    Private-Port_Name: PY_PORT
+    Private:           9000
+    Public-Port-Name:  PY_PROXY_PORT
+    Mappings:
+      - Frontend:      "/update"
+        Backend:       "/update"
+      - Frontend:      "/api"
+        Backend:       "/api"
