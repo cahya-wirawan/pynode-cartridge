@@ -39,7 +39,7 @@ Endpoints:
       - Frontend:      "/"
         Backend:       "/"
   - Priave-IP-Name:    PY_IP
-    Private-Port_Name: PY_PORT
+    Private-Port-Name: PY_PORT
     Private:           9000
     Public-Port-Name:  PY_PROXY_PORT
     Mappings:
