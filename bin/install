@@ -108,8 +108,8 @@ else
 fi
 
 #build_nginx
-build_python
-#build_nodejs
+#build_python
+build_nodejs
 
 rm -rf $tmp/*.tgz 
 rm -rf $tmp/python $tmp/nodejs $tmp/nginx $tmp/zlib $tmp/pcre
