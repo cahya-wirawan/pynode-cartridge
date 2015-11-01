@@ -7,7 +7,7 @@ Description: "This is a cartride that provides node.js and a python web framewor
 Version: "0.1.0"
 License: "The MIT License (MIT)"
 License-Url: http://opensource.org/licenses/MIT
-Catagories:
+Categories:
   - service
   - nodejs
   - python
