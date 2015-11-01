@@ -107,7 +107,7 @@ else
 	cpus=1
 fi
 
-build_nginx
+#build_nginx
 build_python
 #build_nodejs
 
