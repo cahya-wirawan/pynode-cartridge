@@ -32,7 +32,7 @@ Scaling:
   Max: -1
 Endpoints:
   - Private-IP-Name:   JS_IP
-    Privave-Port-Name: JS_PORT
+    Private-Port-Name: JS_PORT
     Private-Port:      8080
     Public-Port-Name:  JS_PROXY_PORT
     Mappings:
