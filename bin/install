@@ -1,0 +1,116 @@
+#!/bin/bash -ue
+
+source $OPENSHIFT_CARTRIDGE_SDK_BASH
+
+pndir=$OPENSHIFT_PYNODE_DIR
+pydir=$OPENSHIFT_PYNODE_PY_DIR
+pyver=$OPENSHIFT_PYNODE_PY_VER
+venvdir=$OPENSHIFT_PYNODE_VENV_DIR
+nodedir=$OPENSHIFT_PYNODE_JS_DIR
+nodever=$OPENSHIFT_PYNODE_JS_VER
+ngindir=$OPENSHIFT_PYNODE_NGIN_DIR 
+nginver=$OPENSHIFT_PYNODE_NGIN_VER
+zlibver='1.2.8'
+pcrever='8.37'
+tmp=$OPENSHIFT_TMP_DIR
+uuid=$OPENSHIFT_GEAR_UUID
+home=$OPENSHIFT_HOMEDIR
+
+function build_nginx() {
+	mkdir -p $ngindir
+	
+	curl -L -o $tmp/nginx.tgz http://nginx.org/download/nginx-${nginver}.tar.gz
+	curl -L -o $tmp/zlib.tgz http://zlib.net/zlib-${zlibver}.tar.gz
+	curl -L -o $tmp/pcre.tgz ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${pcrever}.tar.gz
+	
+	mkdir -p ${tmp}/{nginx,zlib,pcre}
+
+	tar xvzf $tmp/nginx.tgz --strip-components=1 -C $tmp/nginx
+	tar xvzf $tmp/zlib.tgz --strip-components=1 -C $tmp/zlib
+	tar xvzf $tmp/pcre.tgz --strip-components=1 -C $tmp/pcre
+
+	pushd $tmp/nginx > /dev/null
+	./configure --with-zlib="$tmp/zlib" --with-pcre="$tmp/pcre" --prefix="$ngindir"
+	make -j$cpus
+	make install -j$cpus
+	popd > /dev/null
+}
+
+
+function build_python() {
+
+	client_result "Installing Python v$pyver"
+
+	mkdir -p $pydir
+	curl -L -o $tmp/python.tgz https://www.python.org/ftp/python/${pyver}/Python-${pyver}.tgz
+	mkdir -p ${tmp}python
+	tar xvzf $tmp/python.tgz --strip-components=1 -C $tmp/python
+	
+	pushd $tmp/python > /dev/null
+	./configure --prefix="$pydir"
+	make -j4
+	make install
+	popd > /dev/null
+
+	if [[ $pyver == 3* ]]; then
+		$pydir/bin/pip3 install virtualenv
+	else
+		$pydir/bin/pip install virtualenv
+	fi
+
+	$pydir/bin/virtualenv --clear $venvdir
+
+	client_result "$( python3 --V ) installed" 
+
+	
+}
+
+
+function build_nodejs() {
+
+	client_result "Installing Node.js v$nodever"	
+
+	mkdir -p $nodedir 
+	curl -L -o $tmp/nodejs.tgz https://nodejs.org/dist/v${nodever}/node-v${nodever}-linux-x64.tar.gz
+	mkdir -p ${tmp}nodejs
+	tar xvzf $tmp/nodejs.tgz --strip-components=1 -C $nodedir
+
+	find $nodedir -maxdepth 1 -type f -delete	
+
+	# Update npm if necessary
+	if [ $(npm view npm version) != $(npm --version) ]; then
+   		npm i -g npm
+	fi
+
+	# Install gulp globally
+	if ! [ -f $nodedir/usr/bin/gulp ]; then
+    		npm i -g gulp
+	fi
+
+	# npm keeps per-user config in ~/.npmrc and cache in ~/.npm/  and
+	# node-gyp (add-on build tool) uses ~/.node-gyp
+	# Create files/directories, change ownership and SELinux file security context.
+	touch $home/.npmrc
+	mkdir -p $home/.npm
+	mkdir -p $home/.node-gyp
+	chown $uuid.$uuid -R $home/.npm $home/.npmrc $home/.node-gyp
+	npm config set tmp $tmp
+
+	client_result  "Node.js v$nodever installed with npm $( npm --version )"
+}
+
+mkdir -p $pndir/run
+
+if [ -f /proc/cpuinfo ]; then 
+	cpus=`grep -c ^processor /proc/cpuinfo`
+else 
+	cpus=1
+fi
+
+build_nginx
+build_python
+build_nodejs
+
+rm -rf $tmp/*.tgz 
+rm -rf $tmp/python $tmp/nodejs $tmp/nginx $tmp/zlib $tmp/pcre
+
