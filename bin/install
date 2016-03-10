@@ -108,7 +108,7 @@ else
 fi
 
 #build_nginx
-#build_python
+build_python
 build_nodejs
 
 rm -rf $tmp/*.tgz 
