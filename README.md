@@ -1,3 +1,3 @@
 To install use this:
 
-    http://cartreflect-claytondev.rhcloud.com/github/Praisebetoscience/pynode-cartridge
+    https://raw.githubusercontent.com/oscarpicas/pynode-cartridge/master/metadata/manifest.yml

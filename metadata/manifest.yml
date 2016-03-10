@@ -1,7 +1,7 @@
 Name: pynode
 Cartridge-Short-Name: PYNODE
 Cartridge-Version: '0.1.0'
-Cartridge-Vendor: praisebetoscience
+Cartridge-Vendor: oscarpicas
 Display-Name: Pynode 0.1
 Description: "This is a cartride that provides node.js and a python web framework."
 Version: "0.1.0"
