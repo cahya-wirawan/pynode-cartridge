@@ -47,3 +47,4 @@ Endpoints:
         Backend:       "/update"
       - Frontend:      "/api"
         Backend:       "/api"
+Source-Url: https://github.com/oscarpicas/pynode-cartridge/archive/master.zip
